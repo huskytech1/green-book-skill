@@ -110,6 +110,22 @@ const baseDownloads = path.join(os.homedir(), 'Downloads');
 
   console.log(`\n✅ 全部生成完毕！`);
   console.log(`📂 存放路径：${outDir}`);
+
+  // ===== 3. 清理 assets/ 中的临时图片 =====
+  console.log('\n🧹 正在清理临时素材...');
+  const assetsFiles = fs.readdirSync(ASSETS_DIR);
+  assetsFiles.forEach(file => {
+    // 仅删除匹配 news{N}-*.png 格式的临时文件
+    if (/^news[1-5]-.*\.png$/.test(file)) {
+      try {
+        fs.unlinkSync(path.join(ASSETS_DIR, file));
+        console.log(`  🗑️ 已删除临时文件: ${file}`);
+      } catch (e) {
+        console.error(`  ⚠️ 删除失败: ${file}`, e.message);
+      }
+    }
+  });
+
   execSync(`open "${outDir}"`);
 }
 

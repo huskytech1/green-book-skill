@@ -3,7 +3,7 @@ name: green-book
 description: >
   智造三点三（Zhi Zao San Dian San）品牌专用小绿书新闻生图工具。
   当用户明确提到"小绿书"、"Green Book"或"智造三点三"时触发。
-  注意：本技能是特定品牌的 3:4 新闻排版工具，严禁与通用的"小红书 (XHS)"信息图技能混淆。
+github_url: https://github.com/huskytech1/green-book-skill
 ---
 
 # Green Book（智造三点三小绿书）

@@ -13,22 +13,17 @@ function toBase64(filePath) {
   return `data:image/${ext};base64,${data}`;
 }
 
-// 封面图 HTML - 最终像素级对齐版
+// 封面图 HTML - 最终像素级绝对定位版
 function coverHTML(titles) {
   const logoBase64 = toBase64(LOGO_PATH);
   const coverBase64 = toBase64(COVER_PATH);
   
-  // 物理坐标：徽章中心 Y 对齐（模板 1080x1440 → 渲染 900x1200）
-  // 徽章中心(缩放后): 326, 478, 631, 783, 938
-  // 文字首行需与徽章垂直居中对齐：top = center - lineHeight/2
-  const positions = [295, 447, 600, 752, 907]; 
+  // 封面标题位置参数 (V24最终版): 01-05行分别为 299, 455, 604, 759, 914
+  const positions = [299, 455, 604, 759, 914]; 
 
   const items = titles.map((t, i) => {
-    const lines = t.split('\n');
     return `
-      <div class="item" style="top: ${positions[i]}px">
-        <div class="title">${lines.map(l => `<span>${l}</span>`).join('')}</div>
-      </div>
+      <div class="title" style="top: ${positions[i]}px">${t}</div>
     `;
   }).join('');
 
@@ -47,17 +42,12 @@ function coverHTML(titles) {
     position: absolute; top: 120px; left: 50%; transform: translateX(-50%);
     width: 310px; z-index: 10;
   }
-  .item {
-    position: absolute; left: 320px; 
-    width: 540px; height: 120px;
-    display: flex; align-items: flex-start;
-  }
   .title {
-    font-size: 33px; font-weight: 600; color: #333;
-    line-height: 1.3; display: flex; flex-direction: column;
-    text-align: left;
+    position: absolute; left: 320px; width: 540px;
+    font-size: 38px; font-weight: 600; color: #333;
+    line-height: 1.2; text-align: left;
+    white-space: pre-line;
   }
-  .title span { display: block; white-space: nowrap; }
 </style>
 </head><body>
   <img class="logo" src="${logoBase64}" />

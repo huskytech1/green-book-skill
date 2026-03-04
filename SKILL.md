@@ -50,7 +50,14 @@ ls ./assets/
 - **本地化提炼规范**：
   - 抓取正文后，由主模型统一执行摘要提炼。
   - **摘要要求**：字数严格控制在 100 字左右（90-110 字），确保信息密度。
-  - **标题处理**：同步完成 `coverTitle` 和 `headerTitle` 的双行语义化切分。
+  - **标题处理**：同步完成 `coverTitle` 和 `headerTitle` 的语义化提炼。
+    - **封面标题规范**：`coverTitle` 需具有高度话题性和冲击力，**双行显示**（根据语意断句），字数上限为 **15 个字符**。如果字数较少可单行显示，**单行不能超过 11 个字符**。严禁违禁词和虚假宣传。
+
+### 封面位置参数
+
+```
+const positions = [299, 455, 604, 759, 914];
+```
   - `visualKeywords`：提炼 3-5 个英文关键词，驱动 AI 生图。
 - **用户自定义插图处理**（Step 1 同步执行）：
   - 用户若提供配图，图片统一存放在 `~/Downloads/` 目录下
@@ -64,10 +71,10 @@ ls ./assets/
 
 #### 【封面文案】
 
-| 序号 | 第一行标题 (max 12字) | 第二行标题 (max 12字) |
-| :--- | :--- | :--- |
-| 01 | 标题第一行内容 | 标题第二行内容 |
-| 02 | ... | ... |
+| 序号 | 封面标题 (单行，max 13字符) |
+| :--- | :--- |
+| 01 | 标题内容 |
+| 02 | ... |
 
 #### 【内页摘要】
 
@@ -179,10 +186,10 @@ body { width: 900px; height: 1200px; font-family: 'Source Han Sans SC VF', ...; 
 .logo { position: absolute; top: 120px; left: 50%; transform: translateX(-50%); width: 310px; z-index: 10; }
 
 /* 每条标题条目：精确对齐底图序号徽章 */
-/* positions（每条 top 值）: [295, 447, 600, 752, 907]px */
+/* positions（每条 top 值）: [299, 455, 604, 759, 914]px */
 /* 徽章右边缘在约 292px，文字起点 left: 320px（间距 ~28px） */
-.item { position: absolute; left: 320px; width: 540px; height: 120px; display: flex; align-items: flex-start; }
-.title { font-size: 33px; font-weight: 600; color: #333; line-height: 1.3; display: flex; flex-direction: column; text-align: left; }
+.item { position: absolute; left: 320px; width: 540px; height: 120px; display: flex; align-items: center; }
+.title { font-size: 38px; font-weight: 600; color: #333; line-height: 1.2; display: flex; flex-direction: column; text-align: left; }
 .title span { display: block; white-space: nowrap; }
 ```
 

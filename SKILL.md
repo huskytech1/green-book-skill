@@ -4,6 +4,7 @@ description: >
   智造三点三（Zhi Zao San Dian San）品牌专用小绿书新闻生图工具。
   当用户明确提到"小绿书"、"Green Book"或"智造三点三"时触发。
 github_url: https://github.com/huskytech1/green-book-skill
+github_hash: 62571ed593527f9d470dd3f0ae93ca7fcd2129f1
 ---
 
 # Green Book（智造三点三小绿书）

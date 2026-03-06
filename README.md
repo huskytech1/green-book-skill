@@ -52,6 +52,25 @@ npm install
    ```
 4. **结果获取**：图片将自动保存至 `~/Downloads/智造三点三 [日期]V[版本]/` 并自动打开文件夹。
 
+## ⚙️ 自定义生图引擎 (Custom Image Engine)
+
+本工具默认使用 `baoyu-image-gen` 技能进行生图，但你可以轻松适配任何支持命令行调用的生图工具（如 DALL-E 3, Midjourney API, Stable Diffusion 等）。
+
+只需修改 `scripts/run.js` 顶部的 `CONFIG` 对象：
+
+```javascript
+const CONFIG = {
+  // 修改为你自己的生图命令
+  // {{PROMPT}} 会被自动替换为新闻关键词
+  // {{OUTPUT}} 会被自动替换为生成的图片路径
+  imageGenCommand: `your-cli-tool --prompt "{{PROMPT}}" --output "{{OUTPUT}}"`,
+};
+```
+
+**示例配置：**
+- **使用 OpenAI CLI**: `openai api images.generate -p "{{PROMPT}}" --output "{{OUTPUT}}"`
+- **使用自定义 Shell 脚本**: `bash ~/scripts/my-ai-gen.sh "{{PROMPT}}" "{{OUTPUT}}"`
+
 ## 🎨 视觉规范
 
 ### 封面图 (Cover)

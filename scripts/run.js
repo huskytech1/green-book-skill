@@ -7,140 +7,122 @@ const os = require('os');
 const SKILL_DIR = path.join(__dirname, '..');
 const ASSETS_DIR = path.join(SKILL_DIR, 'assets');
 
-// ==========================================
-// ===== 可选配置 (根据你的生图工具修改) =====
-// ==========================================
 const CONFIG = {
-  // 默认使用 baoyu 的生图引擎，如果没有安装，请修改下面的命令
-  // {{PROMPT}} 会被自动替换为 visualKeywords
-  // {{OUTPUT}} 会被自动替换为生成的图片路径
   imageGenCommand: `npx -y bun ${path.join(os.homedir(), '.agents/skills/baoyu-image-gen/scripts/main.ts')} --prompt "{{PROMPT}}, editorial illustration style, 16:9, cinematic lighting, 4k" --image "{{OUTPUT}}" --ar 16:9 --quality 2k`,
-  
-  // 示例：如果你想用 DALL-E 3 (假设你有一个 dalle3.sh 脚本)
-  // imageGenCommand: `bash ~/scripts/dalle3.sh --text "{{PROMPT}}" --save "{{OUTPUT}}"`,
-  
-  // 示例：如果你想用 OpenAI CLI
-  // imageGenCommand: `openai api images.generate -p "{{PROMPT}}" -n 1 -s 1024x1024 --output "{{OUTPUT}}"`,
-  
-  styleSuffix: ', editorial illustration style, 16:9, cinematic lighting, 4k'
 };
 
-// ===== 新闻数据（确认后的正式版本）=====
 const NEWS = [
+  // ... (保持之前的新闻数据不变)
   {
-    coverTitle: 'Win版Codex发布\n今日开启重磅公测',
-    headerTitle: 'OpenAI发布Win版Codex \n 160万开发者已抢先体验',
-    summary: 'OpenAI正式推出Windows版Codex，首周Mac版下载量即破百万。该工具将编程从“手动辅助”转向“智能代理”，支持多智能体异步运行与自动化任务委派。其原生沙箱环境确保了在Windows环境下的高效安全运行，重新定义了软件构建方式。',
-    visualKeywords: 'minimalist tech office with holographic code window, soft blue light, professional 3D render',
-    localImage: path.join(ASSETS_DIR, 'news1-openai-codex.png'),
-    filename: '01-codex'
+    coverTitle: 'PC-Master AI\nGPT-5.4 开启原生控屏',
+    headerTitle: 'GPT-5.4 原生操控电脑',
+    summary: 'OpenAI 正式发布 GPT-5.4，标志着“智能体”时代的重大突破。该模型具备革命性的“原生电脑控制”能力，能像人类一样理解屏幕视觉元素并操作键盘鼠标，直接执行复杂工作流。这标志着 AI 从简单的对话框工具进化为全能助手，彻底重塑了 2026 年的人机交互格局。',
+    visualKeywords: 'AI assistant controlling a laptop screen, futuristic dashboard, neural networks, digital workspace, autonomous software interaction',
+    filename: '01-gpt54'
   },
   {
-    coverTitle: '单个策略掌握极限\n宇树G1机器人封神',
-    headerTitle: '宇树机器人再次进化 \n 单个策略掌握极限动作',
-    summary: '宇树科技联合BIGAI等机构发布OmniXtreme框架，首次实现人形机器人单个通用策略下的连续翻转、极限平衡等高动态动作。通过基于流的生成控制策略与驱动感知残差强化学习，突破了泛化壁垒，成功率达91%，标志着具身智能控制的重大飞跃。',
-    visualKeywords: 'humanoid robot performing a backflip in a high-tech gym, dynamic motion blur, hyper-realistic',
-    localImage: path.join(ASSETS_DIR, 'news2-unitree-robot.png'),
-    filename: '02-unitree'
+    coverTitle: 'MacBook Neo\n苹果首款入门级笔电',
+    headerTitle: '苹果首款入门级笔电 MacBook Neo',
+    summary: '苹果本周发布了入门级笔电 MacBook Neo。为了应对产能受限及 A19 Pro 供应紧张，Neo 采用了优化后的前代芯片，将起售价控制在 600 美元左右。这一战略转型标志着苹果开始通过高性价比策略下探学生及初级职场市场，凭借完整的 macOS 生态吸引大量传统 PC 用户转投阵营。',
+    visualKeywords: 'Sleek minimalist silver laptop, colorful macOS interface, modern industrial design, students studying, Apple ecosystem',
+    filename: '02-macbook-neo'
   },
   {
-    coverTitle: '甄子丹亲口认输\n我打不过机器人！',
-    headerTitle: '甄子丹直言打不过机器人 \n 两会聚焦具身智能安全',
-    summary: '武打明星甄子丹在两会期间感叹春晚机器人表演震撼，直言格斗可能“打不过”它们。与此同时，周鸿祎、齐向东等委员提案均聚焦具身智能与AI安全。随着机器人能力激增，如何在安全驱动下健康发展成为今年两会关注的科技热点。',
-    visualKeywords: 'martial arts master facing a sleek combat robot in a traditional dojo, cinematic lighting, tension',
-    localImage: path.join(ASSETS_DIR, 'news3-donnie-yen.png'),
-    filename: '03-donnie'
+    coverTitle: 'Blood Moon 2026\n罕见月全食震撼全球',
+    headerTitle: '罕见月全食震撼全球：2026 血月',
+    summary: '本周，被称为“2026 血月”的月全食席席卷全球。由于瑞利散射作用，月面呈现出深邃的古铜红色。此次月食因持续时间长、覆盖范围广而备受瞩目，不仅在社交媒体引发全球狂欢，也激发了公众对太空探索的热情。随着阿提米丝计划的推进，此类现象正成为未来月球基地建设的重要观测节点。',
+    visualKeywords: 'Deep red full moon, starry night sky, silhouette of mountains, astronomical phenomenon, telescope view, nebula background',
+    filename: '03-blood-moon'
   },
   {
-    coverTitle: '4599元苹果掀桌\nNeo首搭手机芯片',
-    headerTitle: '史上最便宜MacBook Neo \n 首搭iPhone手机芯片发布',
-    summary: '苹果发布全新MacBook Neo，起售价4599元，创历史新低。该机型首次搭载iPhone上的A18 Pro芯片，采用13英寸Liquid视网膜大屏，具备无风扇静音设计与长效续航。主打学生党与轻办公人群，将于3月11日正式开售，重塑入门级笔电市场。',
-    visualKeywords: 'colorful thin laptop on a minimalist desk, pastel colors, soft studio lighting, apple aesthetic',
-    localImage: path.join(ASSETS_DIR, 'news4-macbook-neo.png'),
-    filename: '04-macbook'
+    coverTitle: 'AI vs Pentagon\nAnthropic 硬刚五角大楼',
+    headerTitle: 'Anthropic 对决五角大楼：安全风险之争',
+    summary: 'Anthropic 宣布对美国国防部提起诉讼，回击被列为“国家安全供应链风险实体”的认定。这一认定直接威胁其商业版图，根源在于双方对 AI 系统军事控制权及数据透明度的长期博弈。这场硅谷巨头与国家机器的对决，折射出超级智能时代下，技术自主权与国家安全之间的深刻摩擦。',
+    visualKeywords: 'Legal documents, gavel, circuit board pattern, government building, data security, high-stakes negotiation',
+    filename: '04-anthropic-pentagon'
   },
   {
-    coverTitle: '全球首个双4S店\n买车顺便带走机器人',
-    headerTitle: '全球首个双4S模式落地 \n 机器人跨界入驻奔驰展厅',
-    summary: '全球首个以“双4S融合模式”打造的机器人体验店“机械伊甸”在北京开业，实现了机器人与汽车4S店的深度跨界。通过共享展厅资源，机器人得以在真实商业环境中提供导览互动，进店客流环比提升15%，为具身智能落地提供了可复制的新路径。',
-    visualKeywords: 'luxury car showroom with a sleek service robot standing next to a car, modern architecture, bright light',
-    localImage: path.join(ASSETS_DIR, 'news5-robot-4s.png'),
-    filename: '05-4s'
+    coverTitle: 'Private Screen\nS26 Ultra 隐私屏黑科技',
+    headerTitle: '三星 S26 Ultra 隐私屏黑科技',
+    summary: '三星发布 Galaxy S26 Ultra 旗舰手机，首度搭载硬件级“宽窄视角切换”防窥屏幕。用户可一键开启物理滤镜，将可视角度限制在 30 度以内，从物理层面杜绝了公共场所的“视觉窃听”。在数字化隐私日益稀缺的 2026 年，这一创新成功树立了移动硬件安全的新标杆。',
+    visualKeywords: 'Smartphone with a glowing screen, privacy filter effect, futuristic mobile device, biometric security, sleek glass body',
+    filename: '05-s26-ultra'
   }
 ];
 
 async function main() {
   const now = new Date();
-  const mm = String(now.getMonth() + 1).padStart(2, '0');
-  const dd = String(now.getDate()).padStart(2, '0');
-  const date = `${mm}${dd}`;
-
-  // 查找下一个可用版本号
-  let version = 1;
+  const date = `${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
   const baseDownloads = path.join(os.homedir(), 'Downloads');
-  while (fs.existsSync(path.join(baseDownloads, `智造三点三 ${date}V${version}`))) {
-    version++;
+
+  // --- 智能目录决策逻辑 ---
+  let targetDir = '';
+  let v = 1;
+  let lastIncompleteDir = '';
+
+  // 扫描所有已存在的当天目录
+  while (true) {
+    const checkPath = path.join(baseDownloads, `智造三点三 ${date}V${v}`);
+    if (!fs.existsSync(checkPath)) break;
+
+    const files = fs.readdirSync(checkPath);
+    const isComplete = files.some(f => f.startsWith('06-') && f.endsWith('.png'));
+    
+    if (!isComplete) {
+      lastIncompleteDir = checkPath; // 找到一个没干完的活
+      break; 
+    }
+    v++;
   }
-  const outDirName = `智造三点三 ${date}V${version}`;
-  const outDir = path.join(baseDownloads, outDirName);
-  if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true });
 
-  // ===== 1. 生成封面图 =====
-  console.log('\n📌 生成封面图（HTML 精确渲染）...');
-  const coverTitles = NEWS.map(n => n.coverTitle);
-  const coverHtml = coverHTML(coverTitles);
-  const coverPath = `${outDir}/01-cover.png`;
-  await screenshot(coverHtml, coverPath);
-  console.log(`✅ 封面图已生成: ${coverPath}`);
+  if (lastIncompleteDir) {
+    targetDir = lastIncompleteDir;
+    console.log(`\n🔄 检测到未完成任务，正在断点续传: ${path.basename(targetDir)}`);
+  } else {
+    targetDir = path.join(baseDownloads, `智造三点三 ${date}V${v}`);
+    fs.mkdirSync(targetDir, { recursive: true });
+    console.log(`\n🆕 开启新任务: ${path.basename(targetDir)}`);
+  }
 
-  // ===== 2. 生成内页图 =====
+  // --- 生成逻辑 ---
+  // 封面
+  const coverPath = path.join(targetDir, '01-cover.png');
+  if (!fs.existsSync(coverPath)) {
+    console.log('📌 生成封面图...');
+    await screenshot(coverHTML(NEWS.map(n => n.coverTitle)), coverPath);
+  }
+
+  // 内页
   for (let i = 0; i < NEWS.length; i++) {
     const news = NEWS[i];
-    console.log(`\n📌 [${i+1}/5] 生成内页: ${news.headerTitle}`);
+    const innerPath = path.join(targetDir, `0${i+2}-${news.filename}.png`);
     
-    // 如果没有本地图片，则生成 AI 图片
+    if (fs.existsSync(innerPath)) {
+      console.log(`⏭️  已跳过: ${news.headerTitle}`);
+      continue;
+    }
+
+    console.log(`\n📌 [${i+1}/5] 生成内页: ${news.headerTitle}`);
     let illustrationPath = (news.localImage && fs.existsSync(news.localImage)) ? news.localImage : null;
     let isAiGenerated = false;
     
     if (!illustrationPath) {
-      if (!news.visualKeywords) {
-        console.log('   ⚠️ 未提供本地图片也无视觉关键词，将生成无图版');
-      } else {
-        const tempOutputPath = path.join(outDir, `temp_${news.filename}.png`);
-        console.log(`   🎨 正在通过 AI 生成插图: ${news.visualKeywords}`);
-        
-        // 替换占位符
-        const cmd = CONFIG.imageGenCommand
-          .replace('{{PROMPT}}', news.visualKeywords)
-          .replace('{{OUTPUT}}', tempOutputPath);
-
-        try {
-          execSync(cmd, { stdio: 'inherit' });
-          if (fs.existsSync(tempOutputPath)) {
-            illustrationPath = tempOutputPath;
-            isAiGenerated = true;
-          }
-        } catch (e) {
-          console.error(`   ❌ AI 生图失败: ${e.message}`);
-        }
-      }
-    } else {
-      console.log(`   📸 使用本地素材: ${illustrationPath}`);
+      const tempImg = path.join(targetDir, `temp_${news.filename}.png`);
+      console.log(`   🎨 AI 生图...`);
+      try {
+        const cmd = CONFIG.imageGenCommand.replace('{{PROMPT}}', news.visualKeywords).replace('{{OUTPUT}}', tempImg);
+        execSync(cmd, { stdio: 'inherit' });
+        if (fs.existsSync(tempImg)) { illustrationPath = tempImg; isAiGenerated = true; }
+      } catch (e) { console.error(`   ❌ 失败: ${e.message}`); }
     }
 
-    const innerHtml = innerHTML(news.headerTitle, news.summary, illustrationPath ? toBase64(illustrationPath) : '');
-    const innerPath = `${outDir}/0${i+2}-${news.filename}.png`;
-    await screenshot(innerHtml, innerPath);
-    console.log(`   ✅ 已合成: ${innerPath}`);
-    
-    // 仅清理本次 AI 生成的临时图片
-    if (isAiGenerated && illustrationPath && fs.existsSync(illustrationPath)) {
-      fs.unlinkSync(illustrationPath);
-    }
+    await screenshot(innerHTML(news.headerTitle, news.summary, illustrationPath ? toBase64(illustrationPath) : ''), innerPath);
+    console.log(`   ✅ 合成完成`);
+    if (isAiGenerated && illustrationPath && fs.existsSync(illustrationPath)) fs.unlinkSync(illustrationPath);
   }
 
-  console.log(`\n🎉 全部完成！输出目录: ${outDir}`);
-  execSync(`open "${outDir}"`);
+  console.log(`\n🎉 任务结束！`);
+  execSync(`open "${targetDir}"`);
 }
 
 main().catch(console.error);

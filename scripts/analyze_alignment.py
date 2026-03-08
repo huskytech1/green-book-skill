@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import os
 import sys
 from PIL import Image
 
@@ -69,6 +70,8 @@ if __name__ == "__main__":
     image_path = (
         sys.argv[1]
         if len(sys.argv) > 1
-        else "/Users/huskytech/Downloads/智造三点三 0304V2/01-cover.png"
+        else os.path.join(
+            os.path.expanduser("~"), "Downloads", "智造三点三 0304V2", "01-cover.png"
+        )
     )
     analyze_alignment(image_path)

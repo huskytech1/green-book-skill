@@ -11,6 +11,32 @@ const CONFIG = {
   imageGenCommand: `npx -y bun ${path.join(os.homedir(), '.agents/skills/baoyu-image-gen/scripts/main.ts')} --prompt "{{PROMPT}}, editorial illustration style, 16:9, cinematic lighting, 4k" --image "{{OUTPUT}}" --ar 16:9 --quality 2k`,
 };
 
+function runCommand(command) {
+  execSync(command, { stdio: 'inherit' });
+}
+
+function resolveIllustrationPath(news, targetDir, forceAiImage) {
+  const hasLocalImage = news.localImage && fs.existsSync(news.localImage) && !forceAiImage;
+  if (hasLocalImage) {
+    return { path: news.localImage, isAiGenerated: false };
+  }
+
+  const generatedImagePath = path.join(targetDir, `ill-${news.filename}.png`);
+  const prompt = `${news.visualKeywords}. News illustration, clean editorial composition, no text, no watermark`;
+  const command = CONFIG.imageGenCommand
+    .replace('{{PROMPT}}', prompt.replace(/"/g, '\\"'))
+    .replace('{{OUTPUT}}', generatedImagePath.replace(/"/g, '\\"'));
+
+  console.log('   🎨 未找到本地素材，开始使用 AI 生图...');
+  runCommand(command);
+
+  if (!fs.existsSync(generatedImagePath)) {
+    throw new Error(`AI illustration was not generated: ${generatedImagePath}`);
+  }
+
+  return { path: generatedImagePath, isAiGenerated: true };
+}
+
 const NEWS = [
   // ... (保持之前的新闻数据不变)
   {
@@ -53,7 +79,9 @@ const NEWS = [
 async function main() {
   const now = new Date();
   const date = `${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-  const baseDownloads = path.join(os.homedir(), 'Downloads');
+  const baseOutputDir = process.env.GREEN_BOOK_OUTPUT_DIR || path.join(os.homedir(), 'Pictures', 'green-book');
+  const forceAiImage = process.env.GREEN_BOOK_FORCE_AI_IMAGES === '1';
+  fs.mkdirSync(baseOutputDir, { recursive: true });
 
   // --- 智能目录决策逻辑 ---
   let targetDir = '';
@@ -62,7 +90,7 @@ async function main() {
 
   // 扫描所有已存在的当天目录
   while (true) {
-    const checkPath = path.join(baseDownloads, `智造三点三 ${date}V${v}`);
+    const checkPath = path.join(baseOutputDir, `智造三点三 ${date}V${v}`);
     if (!fs.existsSync(checkPath)) break;
 
     const files = fs.readdirSync(checkPath);
@@ -79,7 +107,7 @@ async function main() {
     targetDir = lastIncompleteDir;
     console.log(`\n🔄 检测到未完成任务，正在断点续传: ${path.basename(targetDir)}`);
   } else {
-    targetDir = path.join(baseDownloads, `智造三点三 ${date}V${v}`);
+    targetDir = path.join(baseOutputDir, `智造三点三 ${date}V${v}`);
     fs.mkdirSync(targetDir, { recursive: true });
     console.log(`\n🆕 开启新任务: ${path.basename(targetDir)}`);
   }
@@ -103,22 +131,10 @@ async function main() {
     }
 
     console.log(`\n📌 [${i+1}/5] 生成内页: ${news.headerTitle}`);
-    let illustrationPath = (news.localImage && fs.existsSync(news.localImage)) ? news.localImage : null;
-    let isAiGenerated = false;
-    
-    if (!illustrationPath) {
-      const tempImg = path.join(targetDir, `temp_${news.filename}.png`);
-      console.log(`   🎨 AI 生图...`);
-      try {
-        const cmd = CONFIG.imageGenCommand.replace('{{PROMPT}}', news.visualKeywords).replace('{{OUTPUT}}', tempImg);
-        execSync(cmd, { stdio: 'inherit' });
-        if (fs.existsSync(tempImg)) { illustrationPath = tempImg; isAiGenerated = true; }
-      } catch (e) { console.error(`   ❌ 失败: ${e.message}`); }
-    }
+    const { path: illustrationPath, isAiGenerated } = resolveIllustrationPath(news, targetDir, forceAiImage);
 
-    await screenshot(innerHTML(news.headerTitle, news.summary, illustrationPath ? toBase64(illustrationPath) : ''), innerPath);
+    await screenshot(innerHTML(news.headerTitle, news.summary, toBase64(illustrationPath)), innerPath);
     console.log(`   ✅ 合成完成`);
-    if (isAiGenerated && illustrationPath && fs.existsSync(illustrationPath)) fs.unlinkSync(illustrationPath);
   }
 
   console.log(`\n🎉 任务结束！`);

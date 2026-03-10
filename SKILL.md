@@ -61,8 +61,8 @@ const positions = [299, 455, 604, 759, 914];
 ```
   - `visualKeywords`：提炼 3-5 个英文关键词，驱动 AI 生图。
 - **用户自定义插图处理**（Step 1 同步执行）：
-  - 用户若提供配图，图片统一存放在 `~/Downloads/` 目录下
-  - 执行前将对应图片从 `~/Downloads/` 复制到 `assets/` 目录，命名规则：`news{N}-{slug}.png`（N 为新闻序号）
+  - 用户若提供配图，优先存放在 `~/Pictures/green-book-inputs/`，也兼容 `~/Downloads/`
+  - 执行前将对应图片复制到 `assets/` 目录，命名规则：`news{N}-{slug}.png`（N 为新闻序号）
   - 在 NEWS 数组对应条目中设置 `localImage` 字段指向该路径
   - **任务完成后**自动删除 `assets/` 中本次复制的所有 `news{N}-*.png` 临时图片
 
@@ -121,11 +121,17 @@ const NEWS = [
 cd [SKILL_DIR] && node scripts/run.js
 ```
 
+如需强制忽略本地素材、统一改走 AI 生图，可设置：
+
+```bash
+GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
+```
+
 脚本会自动完成以下所有操作：
 1. 用 HTML + Playwright 精确渲染封面图（以 `cover-template.png` 为背景底图，标题与序号徽章像素级对齐）
-2. 对每条新闻，有 `localImage` 则直接使用，否则用 `baoyu-image-gen` 生成 16:9 插图底图
+2. 对每条新闻，有 `localImage` 则直接使用；没有素材图时，默认自动调用 `baoyu-image-gen` 生成 16:9 插图底图
 3. 用 HTML + Playwright 合成内页，确保布局 100% 一致
-4. 输出到 `~/Downloads/智造三点三 ${mmdd}V${x}/`（自动递增版本号，如 `智造三点三 0303V1`）
+4. 输出到 `~/Pictures/green-book/智造三点三 ${mmdd}V${x}/`（自动递增版本号，如 `智造三点三 0303V1`）
 5. 自动用 Finder 打开输出目录
 6. **自动删除** `assets/` 中本次复制的所有 `news{N}-*.png` 临时图片
 

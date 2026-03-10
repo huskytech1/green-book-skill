@@ -50,7 +50,13 @@ npm install
    ```bash
    node scripts/run.js
    ```
-4. **结果获取**：图片将自动保存至 `~/Downloads/智造三点三 [日期]V[版本]/` 并自动打开文件夹。
+4. **结果获取**：图片将自动保存至 `~/Pictures/green-book/智造三点三 [日期]V[版本]/` 并自动打开文件夹。
+
+如需强制所有内页都使用 AI 生图，可执行：
+
+```bash
+GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
+```
 
 ## ⚙️ 自定义生图引擎 (Custom Image Engine)
 

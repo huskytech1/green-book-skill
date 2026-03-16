@@ -55,18 +55,18 @@ function resolveIllustrationPath(news, targetDir, forceAiImage) {
 
 const NEWS = [
   {
-    coverTitle: '315揭露GEO乱象\nAI投毒操控搜索答案',
-    headerTitle: '315晚会曝光GEO乱象\nAI“投毒”操控大模型答案',
-    summary: '2026年315晚会重磅曝光“生成式引擎优化”（GEO）滥用乱象。力擎GEO等黑产公司利用AI“投毒”技术，通过海量虚假数据干预大模型搜索结果，诱导DeepSeek、通义千问等主流模型将虚构产品列为推荐首选，甚至精准抹黑竞品。此举严重污染了AI信息源，导致消费者面临巨大误导风险。市场监管总局已开展专项彻查，拟将AI虚假宣传纳入重点监管，要求大模型厂商强化语料清洗与溯源，重塑行业公信力。',
-    visualKeywords: 'AI robot poisoning a glowing digital brain, hacker theme, neon circuitry, cinematic lighting, editorial illustration',
-    filename: '01-315-geo'
+    coverTitle: '拒绝监控与自主武器\nAnthropic 硬刚战争部！',
+    headerTitle: '拒绝监控与自主武器\nAnthropic 硬刚战争部！',
+    summary: '示例摘要：这里填入约 150-170 字的新闻深度提炼。内容需保持高密度与专业性，确保在思源黑体下排版美观。',
+    visualKeywords: 'AI robot facing military authority courtroom battle, minimalist illustration',
+    filename: '01-example'
   },
   {
-    coverTitle: '河南首家人形机器人4S店\n以租代购商业化再提速',
-    headerTitle: '河南首家人形机器人4S店\n“以租代购”商业化提速',
-    summary: '河南首家人形机器人4S店在郑州正式启幕，借鉴汽车行业模式，提供销售、租赁及模型迭代等全方位服务。店内汇聚宇树、智元等领军企业产品。自春晚走红后，该店租赁业务极度火热，多款机器人广泛应用于商超迎宾、景区互动等场景，有效降低了企业方的技术尝试门槛。专家认为，该模式成功打通了研发与消费端的“最后一公里”，通过“以租代购”灵活策略，正加速推动具身智能未来产业步入商业化快车道。',
-    visualKeywords: 'Humanoid robot showroom in Zhengzhou, 4S store layout, clean futuristic interior, interaction with customers, editorial illustration',
-    filename: '02-henan-4s'
+    coverTitle: '示例新闻标题二\n合理断句保持视觉平衡',
+    headerTitle: '示例新闻标题二：这里是表头',
+    summary: '示例摘要二：支持 \n 换行符以优化视觉对齐。摘要严格控制字数以达到最佳阅读体验。',
+    visualKeywords: 'Humanoid robot showroom, clean futuristic interior, editorial illustration',
+    filename: '02-example'
   }
 ];
 

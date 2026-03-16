@@ -8,7 +8,8 @@ const SKILL_DIR = path.join(__dirname, '..');
 const ASSETS_DIR = path.join(SKILL_DIR, 'assets');
 
 const CONFIG = {
-  imageGenCommand: `npx -y bun ${path.join(os.homedir(), '.agents/skills/baoyu-image-gen/scripts/main.ts')} --prompt "{{PROMPT}}, editorial illustration style, 16:9, cinematic lighting, 4k" --image "{{OUTPUT}}" --ar 16:9 --quality 2k`,
+  // 默认使用 baoyu-image-gen，可通过环境变量覆盖
+  imageGenCommand: process.env.GREEN_BOOK_IMAGE_GEN_CMD || `npx -y bun ${path.join(os.homedir(), '.agents/skills/baoyu-image-gen/scripts/main.ts')} --prompt "{{PROMPT}}, editorial illustration style, 16:9, cinematic lighting, 4k" --image "{{OUTPUT}}" --ar 16:9 --quality 2k`,
 };
 
 function runCommand(command) {
@@ -38,47 +39,26 @@ function resolveIllustrationPath(news, targetDir, forceAiImage) {
 }
 
 const NEWS = [
-  // ... (保持之前的新闻数据不变)
   {
-    coverTitle: 'PC-Master AI\nGPT-5.4 开启原生控屏',
-    headerTitle: 'GPT-5.4 原生操控电脑',
-    summary: 'OpenAI 正式发布 GPT-5.4，标志着“智能体”时代的重大突破。该模型具备革命性的“原生电脑控制”能力，能像人类一样理解屏幕视觉元素并操作键盘鼠标，直接执行复杂工作流。这标志着 AI 从简单的对话框工具进化为全能助手，彻底重塑了 2026 年的人机交互格局。',
-    visualKeywords: 'AI assistant controlling a laptop screen, futuristic dashboard, neural networks, digital workspace, autonomous software interaction',
-    filename: '01-gpt54'
+    coverTitle: '拒绝监控与自主武器\nAnthropic 硬刚战争部！',
+    headerTitle: '拒绝监控与自主武器\nAnthropic 硬刚战争部！',
+    summary: '美国战争部长近日宣布将 Anthropic 列为"国家安全供应链风险实体"，指责其模型在拒绝提供监控接口方面存在合规漏洞。Anthropic 随后提起诉讼，坚称其宪法 AI 框架严禁用于自主武器开发及非对称监控任务。这场诉讼标志着硅谷巨头与政府在 AI 伦理底线上的公开决裂。专家指出，技术自主权与国家安全边界的博弈，将决定 2026 年后全球 AI 治理的基础逻辑。',
+    visualKeywords: 'AI robot facing military authority courtroom battle, minimalist illustration',
+    filename: '01-anthropic'
   },
   {
-    coverTitle: 'MacBook Neo\n苹果首款入门级笔电',
-    headerTitle: '苹果首款入门级笔电 MacBook Neo',
-    summary: '苹果本周发布了入门级笔电 MacBook Neo。为了应对产能受限及 A19 Pro 供应紧张，Neo 采用了优化后的前代芯片，将起售价控制在 600 美元左右。这一战略转型标志着苹果开始通过高性价比策略下探学生及初级职场市场，凭借完整的 macOS 生态吸引大量传统 PC 用户转投阵营。',
-    visualKeywords: 'Sleek minimalist silver laptop, colorful macOS interface, modern industrial design, students studying, Apple ecosystem',
-    filename: '02-macbook-neo'
-  },
-  {
-    coverTitle: 'Blood Moon 2026\n罕见月全食震撼全球',
-    headerTitle: '罕见月全食震撼全球：2026 血月',
-    summary: '本周，被称为“2026 血月”的月全食席席卷全球。由于瑞利散射作用，月面呈现出深邃的古铜红色。此次月食因持续时间长、覆盖范围广而备受瞩目，不仅在社交媒体引发全球狂欢，也激发了公众对太空探索的热情。随着阿提米丝计划的推进，此类现象正成为未来月球基地建设的重要观测节点。',
-    visualKeywords: 'Deep red full moon, starry night sky, silhouette of mountains, astronomical phenomenon, telescope view, nebula background',
-    filename: '03-blood-moon'
-  },
-  {
-    coverTitle: 'AI vs Pentagon\nAnthropic 硬刚五角大楼',
-    headerTitle: 'Anthropic 对决五角大楼：安全风险之争',
-    summary: 'Anthropic 宣布对美国国防部提起诉讼，回击被列为“国家安全供应链风险实体”的认定。这一认定直接威胁其商业版图，根源在于双方对 AI 系统军事控制权及数据透明度的长期博弈。这场硅谷巨头与国家机器的对决，折射出超级智能时代下，技术自主权与国家安全之间的深刻摩擦。',
-    visualKeywords: 'Legal documents, gavel, circuit board pattern, government building, data security, high-stakes negotiation',
-    filename: '04-anthropic-pentagon'
-  },
-  {
-    coverTitle: 'Private Screen\nS26 Ultra 隐私屏黑科技',
-    headerTitle: '三星 S26 Ultra 隐私屏黑科技',
-    summary: '三星发布 Galaxy S26 Ultra 旗舰手机，首度搭载硬件级“宽窄视角切换”防窥屏幕。用户可一键开启物理滤镜，将可视角度限制在 30 度以内，从物理层面杜绝了公共场所的“视觉窃听”。在数字化隐私日益稀缺的 2026 年，这一创新成功树立了移动硬件安全的新标杆。',
-    visualKeywords: 'Smartphone with a glowing screen, privacy filter effect, futuristic mobile device, biometric security, sleek glass body',
-    filename: '05-s26-ultra'
+    coverTitle: '众擎URKL格斗机器人\n启动全球招募首秀',
+    headerTitle: '众擎URKL人形机器人自由格斗联赛\n正式启动全球招募',
+    summary: '众擎机器人正式发布 URKL 人形机器人自由格斗联赛招募令，旨在通过极高强度的实战对抗检验人形机器人的地形适应性与动态平衡算法。本次联赛将采用全自主导航与战术决策模式，机器人需在复杂模拟战场中执行格斗与避障任务。作为具身智能领域的顶级赛事，URKL 不仅是硬件性能的博弈，更是对大模型驱动下实时物理反馈能力的最高规格实测，吸引了全球数家顶尖实验室参与。',
+    visualKeywords: 'Humanoid robots fighting in a high-tech arena, dynamic action pose, cinematic sparks, editorial illustration',
+    filename: '02-urkl-battle'
   }
 ];
 
 async function main() {
   const now = new Date();
   const date = `${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+  // 默认保存到用户 Pictures 目录，可通过环境变量 GREEN_BOOK_OUTPUT_DIR 自定义
   const baseOutputDir = process.env.GREEN_BOOK_OUTPUT_DIR || path.join(os.homedir(), 'Pictures', 'green-book');
   const forceAiImage = process.env.GREEN_BOOK_FORCE_AI_IMAGES === '1';
   fs.mkdirSync(baseOutputDir, { recursive: true });
@@ -130,15 +110,17 @@ async function main() {
       continue;
     }
 
-    console.log(`\n📌 [${i+1}/5] 生成内页: ${news.headerTitle}`);
+    console.log(`\n📌 [${i+1}/${NEWS.length}] 生成内页: ${news.headerTitle}`);
     const { path: illustrationPath, isAiGenerated } = resolveIllustrationPath(news, targetDir, forceAiImage);
 
     await screenshot(innerHTML(news.headerTitle, news.summary, toBase64(illustrationPath)), innerPath);
     console.log(`   ✅ 合成完成`);
   }
 
-  console.log(`\n🎉 任务结束！`);
-  execSync(`open "${targetDir}"`);
+  console.log(`\n🎉 任务结束！图片已保存至: ${targetDir}`);
+  if (os.platform() === 'darwin') {
+    try { execSync(`open "${targetDir}"`); } catch (e) {}
+  }
 }
 
 main().catch(console.error);

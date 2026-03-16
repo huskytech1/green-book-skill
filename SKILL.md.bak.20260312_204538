@@ -4,7 +4,7 @@ description: >
   智造三点三（Zhi Zao San Dian San）品牌专用小绿书新闻生图工具。
   当用户明确提到"小绿书"、"Green Book"或"智造三点三"时触发。
 github_url: https://github.com/huskytech1/green-book-skill
-github_hash: aabfb0adba1bc497b5756e2d0d650bfa7ea37426
+github_hash: a9fcc4122b7bbc40b238628cbb1dd22ce5e9232e
 ---
 
 # Green Book（智造三点三小绿书）
@@ -50,20 +50,18 @@ ls ./assets/
   - **特定场景/社交媒体**：对于复杂页面或社交平台（如 X/Twitter），使用专用技能抓取。
 - **本地化提炼规范**：
   - 抓取正文后，由主模型统一执行摘要提炼。
-  - **摘要要求**：字数严格控制在 **150-170 字** 左右，确保信息高密度且排版丰满。
+  - **摘要要求**：字数严格控制在 100 字左右（90-110 字），确保信息密度。
   - **标题处理**：同步完成 `coverTitle` 和 `headerTitle` 的语义化提炼。
-    - **封面标题规范**：`coverTitle` 需具有高度话题性和冲击力，**强制双行显示**（使用 `\n` 断句），**单行不得超过 11 个字符**。断句需符合语义逻辑，避免产生歧义。严禁使用违禁词。
-    - **表头标题规范**：`headerTitle` 建议在 15-20 字，可与封面标题一致或略微扩充，同样支持 `\n` 换行以优化视觉对齐。
+    - **封面标题规范**：`coverTitle` 需具有高度话题性和冲击力，**双行显示**（根据语意断句），字数上限为 **15 个字符**。如果字数较少可单行显示，**单行不能超过 11 个字符**。严禁违禁词和虚假宣传。
 
 ### 封面位置参数
 
 ```
 const positions = [299, 455, 604, 759, 914];
 ```
-  - `visualKeywords`：提炼 3-5 个英文关键词，驱动 AI 生图。 prompt 需强制包含 `editorial illustration style` 关键词以保持风格。
-
+  - `visualKeywords`：提炼 3-5 个英文关键词，驱动 AI 生图。
 - **用户自定义插图处理**（Step 1 同步执行）：
-  - 用户若提供配图，优先存放在 `~/Pictures/green-book-inputs/`，也兼容 `~/Downloads/`
+  - 用户若提供配图，优先存放在 `/Users/huskytech/my_project_area/images/`，兼容 `~/Downloads/`
   - 执行前将对应图片复制到 `assets/` 目录，命名规则：`news{N}-{slug}.png`（N 为新闻序号）
   - 在 NEWS 数组对应条目中设置 `localImage` 字段指向该路径
   - **任务完成后**自动删除 `assets/` 中本次复制的所有 `news{N}-*.png` 临时图片
@@ -83,7 +81,7 @@ const positions = [299, 455, 604, 759, 914];
 
 **01 | <headerTitle> (15-20字，语义切分)**
 
-> 摘要正文内容（150-170字，信息密度高，语言专业）。
+> 摘要正文内容（90-110字，信息密度高，语言专业）。
 
 ---
 
@@ -123,7 +121,7 @@ const NEWS = [
 cd [SKILL_DIR] && node scripts/run.js
 ```
 
-如需强制忽略本地素材、统一改走 AI 生图，可设置：
+如需强制忽略本地素材，统一改走 AI 生图，可设置：
 
 ```bash
 GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
@@ -133,7 +131,7 @@ GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
 1. 用 HTML + Playwright 精确渲染封面图（以 `cover-template.png` 为背景底图，标题与序号徽章像素级对齐）
 2. 对每条新闻，有 `localImage` 则直接使用；没有素材图时，默认自动调用 `baoyu-image-gen` 生成 16:9 插图底图
 3. 用 HTML + Playwright 合成内页，确保布局 100% 一致
-4. 输出到 `~/Pictures/green-book/智造三点三 ${mmdd}V${x}/`（自动递增版本号，如 `智造三点三 0303V1`）
+4. 输出到 `/Users/huskytech/my_project_area/images/green-book/智造三点三 ${mmdd}V${x}/`（自动递增版本号，如 `智造三点三 0303V1`）
 5. 自动用 Finder 打开输出目录
 6. **自动删除** `assets/` 中本次复制的所有 `news{N}-*.png` 临时图片
 
@@ -266,19 +264,10 @@ body { width: 900px; height: 1200px; background: #d4c9a8; position: relative; ov
 
 ---
 
-## 图像生成故障处理指南
-
-1. **API 密钥失效**：若 `baoyu-image-gen` 报错（如 400 API Key not found），应立即尝试通过 `baoyu-danger-gemini-web --login` 刷新 Cookie，并修改 `run.js` 中的 `imageGenCommand` 切换到 Gemini Web 生图方案。
-2. **生图超时**：由于网络或 AI 响应原因导致超时，利用 `run.js` 的断点续传机制（检测已存在文件）分批次重新运行脚本。
-3. **占位方案**：在极端不可控情况下，可使用 ImageMagick `magick` 命令生成带有主题色块和文字的占位插图，以维持排版结构完整：
-   ```bash
-   magick -size 1600x900 xc:#COLOR -gravity center -font "Source Han Sans SC VF" -pointsize 80 -fill white -annotate 0 "TITLE" output.png
-   ```
-
 ## 注意事项
 - **高清输出**：最终输出分辨率应为 1800x2400，确保在手机端查看时文字边缘锐利、背景纹理清晰。
 - **封面图对齐**：封面图采用 HTML 渲染，标题文字需与底图中的序号徽章实现像素级垂直居中对齐。
-- **摘要长度**：摘要严格控制在 150-170 字，配合 `line-height: 1.85` 达到最佳阅读体验。
+- **摘要长度**：摘要严格控制在 90-110 字，配合 `line-height: 1.85` 达到最佳阅读体验。
 - **AI 生图**：`visualKeywords` 必须使用英文，且 prompt 应包含 `editorial illustration style` 关键词以保持风格统一。
 
 ## 用户自定义插图规范

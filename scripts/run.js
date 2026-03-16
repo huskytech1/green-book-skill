@@ -8,8 +8,11 @@ const SKILL_DIR = path.join(__dirname, '..');
 const ASSETS_DIR = path.join(SKILL_DIR, 'assets');
 
 const CONFIG = {
-  // 默认使用 baoyu-image-gen，可通过环境变量覆盖
-  imageGenCommand: process.env.GREEN_BOOK_IMAGE_GEN_CMD || `npx -y bun ${path.join(os.homedir(), '.agents/skills/baoyu-image-gen/scripts/main.ts')} --prompt "{{PROMPT}}, editorial illustration style, 16:9, cinematic lighting, 4k" --image "{{OUTPUT}}" --ar 16:9 --quality 2k`,
+  // 优先：Gemini Web 方案 (免 API Key，稳定性高)
+  geminiWebCommand: process.env.GREEN_BOOK_GEMINI_WEB_CMD || `npx -y bun ${path.join(os.homedir(), '.agents/skills/baoyu-danger-gemini-web/scripts/main.ts')} --prompt "{{PROMPT}}, editorial illustration style, 16:9, cinematic lighting, 4k" --image "{{OUTPUT}}"`,
+  
+  // 备选：标准 API 方案
+  baoyuImageGenCommand: process.env.GREEN_BOOK_IMAGE_GEN_CMD || `npx -y bun ${path.join(os.homedir(), '.agents/skills/baoyu-image-gen/scripts/main.ts')} --prompt "{{PROMPT}}, editorial illustration style, 16:9, cinematic lighting, 4k" --image "{{OUTPUT}}" --ar 16:9 --quality 2k`,
 };
 
 function runCommand(command) {
@@ -24,12 +27,24 @@ function resolveIllustrationPath(news, targetDir, forceAiImage) {
 
   const generatedImagePath = path.join(targetDir, `ill-${news.filename}.png`);
   const prompt = `${news.visualKeywords}. News illustration, clean editorial composition, no text, no watermark`;
-  const command = CONFIG.imageGenCommand
-    .replace('{{PROMPT}}', prompt.replace(/"/g, '\\"'))
-    .replace('{{OUTPUT}}', generatedImagePath.replace(/"/g, '\\"'));
-
+  
   console.log('   🎨 未找到本地素材，开始使用 AI 生图...');
-  runCommand(command);
+
+  // 尝试第一引擎：Gemini Web
+  try {
+    console.log('   🚀 正在使用 Gemini Web 引擎...');
+    const command = CONFIG.geminiWebCommand
+      .replace('{{PROMPT}}', prompt.replace(/"/g, '\\"'))
+      .replace('{{OUTPUT}}', generatedImagePath.replace(/"/g, '\\"'));
+    runCommand(command);
+  } catch (err) {
+    console.warn('   ⚠️  Gemini Web 引擎执行失败，尝试备选引擎...');
+    // 尝试第二引擎：Baoyu Image Gen
+    const command = CONFIG.baoyuImageGenCommand
+      .replace('{{PROMPT}}', prompt.replace(/"/g, '\\"'))
+      .replace('{{OUTPUT}}', generatedImagePath.replace(/"/g, '\\"'));
+    runCommand(command);
+  }
 
   if (!fs.existsSync(generatedImagePath)) {
     throw new Error(`AI illustration was not generated: ${generatedImagePath}`);
@@ -40,18 +55,18 @@ function resolveIllustrationPath(news, targetDir, forceAiImage) {
 
 const NEWS = [
   {
-    coverTitle: '拒绝监控与自主武器\nAnthropic 硬刚战争部！',
-    headerTitle: '拒绝监控与自主武器\nAnthropic 硬刚战争部！',
-    summary: '美国战争部长近日宣布将 Anthropic 列为"国家安全供应链风险实体"，指责其模型在拒绝提供监控接口方面存在合规漏洞。Anthropic 随后提起诉讼，坚称其宪法 AI 框架严禁用于自主武器开发及非对称监控任务。这场诉讼标志着硅谷巨头与政府在 AI 伦理底线上的公开决裂。专家指出，技术自主权与国家安全边界的博弈，将决定 2026 年后全球 AI 治理的基础逻辑。',
-    visualKeywords: 'AI robot facing military authority courtroom battle, minimalist illustration',
-    filename: '01-anthropic'
+    coverTitle: '315揭露GEO乱象\nAI投毒操控大模型答案',
+    headerTitle: '315晚会曝光GEO乱象\nAI“投毒”操控大模型答案',
+    summary: '2026年315晚会重磅曝光“生成式引擎优化”（GEO）滥用乱象。力擎GEO等黑产公司利用AI“投毒”技术，通过海量虚假数据干预大模型搜索结果，诱导DeepSeek、通义千问等主流模型将虚构产品列为推荐首选，甚至精准抹黑竞品。此举严重污染了AI信息源，导致消费者面临巨大误导风险。市场监管总局已开展专项彻查，拟将AI虚假宣传纳入重点监管，要求大模型厂商强化语料清洗与溯源，重塑行业公信力。',
+    visualKeywords: 'AI robot poisoning a glowing digital brain, hacker theme, neon circuitry, cinematic lighting, editorial illustration',
+    filename: '01-315-geo'
   },
   {
-    coverTitle: '众擎URKL格斗机器人\n启动全球招募首秀',
-    headerTitle: '众擎URKL人形机器人自由格斗联赛\n正式启动全球招募',
-    summary: '众擎机器人正式发布 URKL 人形机器人自由格斗联赛招募令，旨在通过极高强度的实战对抗检验人形机器人的地形适应性与动态平衡算法。本次联赛将采用全自主导航与战术决策模式，机器人需在复杂模拟战场中执行格斗与避障任务。作为具身智能领域的顶级赛事，URKL 不仅是硬件性能的博弈，更是对大模型驱动下实时物理反馈能力的最高规格实测，吸引了全球数家顶尖实验室参与。',
-    visualKeywords: 'Humanoid robots fighting in a high-tech arena, dynamic action pose, cinematic sparks, editorial illustration',
-    filename: '02-urkl-battle'
+    coverTitle: '河南首家人形机器人4S店\n以租代购商业化再提速',
+    headerTitle: '河南首家人形机器人4S店\n“以租代购”商业化提速',
+    summary: '河南首家人形机器人4S店在郑州正式启幕，借鉴汽车行业模式，提供销售、租赁及模型迭代等全方位服务。店内汇聚宇树、智元、乐聚等领军企业产品。自春晚走红后，该店租赁业务极度火热，多款机器人广泛应用于商超迎宾、景区互动等场景，有效降低了企业方的技术尝试门槛。专家认为，该模式成功打通了研发与消费端的“最后一公里”，通过“以租代购”灵活策略，正加速推动具身智能未来产业步入商业化快车道。',
+    visualKeywords: 'Humanoid robot showroom in Zhengzhou, 4S store layout, clean futuristic interior, interaction with customers, editorial illustration',
+    filename: '02-henan-4s'
   }
 ];
 

@@ -268,7 +268,7 @@ body { width: 900px; height: 1200px; background: #d4c9a8; position: relative; ov
 
 ## 图像生成故障处理指南
 
-1. **API 密钥失效**：若 `baoyu-image-gen` 报错（如 400 API Key not found），应立即尝试通过 `baoyu-danger-gemini-web --login` 刷新 Cookie，并修改 `run.js` 中的 `imageGenCommand` 切换到 Gemini Web 生图方案。
+1. **双引擎生图**：脚本默认优先调用 `baoyu-danger-gemini-web` (Gemini Web) 生图，若执行失败（如 Cookie 过期）则自动回退至 `baoyu-image-gen` (标准 API) 方案。
 2. **生图超时**：由于网络或 AI 响应原因导致超时，利用 `run.js` 的断点续传机制（检测已存在文件）分批次重新运行脚本。
 3. **占位方案**：在极端不可控情况下，可使用 ImageMagick `magick` 命令生成带有主题色块和文字的占位插图，以维持排版结构完整：
    ```bash

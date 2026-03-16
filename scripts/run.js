@@ -57,14 +57,14 @@ const NEWS = [
   {
     coverTitle: '拒绝监控与自主武器\nAnthropic 硬刚战争部！',
     headerTitle: '拒绝监控与自主武器\nAnthropic 硬刚战争部！',
-    summary: '示例摘要：这里填入约 150-170 字的新闻深度提炼。内容需保持高密度与专业性，确保在思源黑体下排版美观。',
+    summary: '示例摘要：此标题超过11字，已自动切分为双行。内容需保持高密度与专业性，确保在思源黑体下排版美观。',
     visualKeywords: 'AI robot facing military authority courtroom battle, minimalist illustration',
     filename: '01-example'
   },
   {
-    coverTitle: '示例新闻标题二\n合理断句保持视觉平衡',
+    coverTitle: '示例简洁标题',
     headerTitle: '示例新闻标题二：这里是表头',
-    summary: '示例摘要二：支持 \n 换行符以优化视觉对齐。摘要严格控制字数以达到最佳阅读体验。',
+    summary: '示例摘要二：此标题少于11字，采用单行显示模式。摘要严格控制字数以达到最佳阅读体验。',
     visualKeywords: 'Humanoid robot showroom, clean futuristic interior, editorial illustration',
     filename: '02-example'
   }

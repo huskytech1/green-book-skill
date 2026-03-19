@@ -56,7 +56,7 @@ function coverHTML(titles) {
 }
 
 // 内页图 HTML
-function innerHTML(title, summary, illustrationBase64) {
+function innerHTML(title, summary, illustrationBase64, imagePosition = 'center center') {
   const logoBase64 = toBase64(LOGO_PATH);
   const coverBase64 = toBase64(COVER_PATH);
   return `<!DOCTYPE html>
@@ -93,7 +93,7 @@ function innerHTML(title, summary, illustrationBase64) {
   <div class="sticky sticky-4"></div>
   <div class="paper">
     <div class="header"><div class="header-title">${title}</div></div>
-    <img class="illustration" src="${illustrationBase64}" />
+    <img class="illustration" src="${illustrationBase64}" style="object-position: ${imagePosition};" />
     <div class="content">
       <div class="summary">${summary}</div>
       <div class="logo-bar"><img class="logo-small" src="${logoBase64}" /></div>
@@ -103,7 +103,16 @@ function innerHTML(title, summary, illustrationBase64) {
 }
 
 async function screenshot(html, outputPath) {
-  const browser = await chromium.launch();
+  const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  const browserOptions = {
+    headless: true
+  };
+  
+  if (fs.existsSync(chromePath)) {
+    browserOptions.executablePath = chromePath;
+  }
+
+  const browser = await chromium.launch(browserOptions);
   const context = await browser.newContext({
     viewport: { width: 900, height: 1200 },
     deviceScaleFactor: 2

@@ -1,101 +1,35 @@
-# Green Book (智造三点三小绿书)
+# 小绿书 Green Book Skill
+智造三点三品牌专用小绿书新闻生图技能。
 
-`green-book` 是一个为 **智造三点三 (Zhi Zao San Dian San)** 品牌量身定制的 AI 新闻生图工具。它能够将复杂的科技新闻自动提炼为适合社交媒体传播的高质量信息图（写字板风格）。
+## 功能说明
+快速生成小绿书风格的图文新闻卡片，支持批量处理多条新闻。
 
-## 🌟 核心特性
+## 触发规则
+用户明确提到「小绿书」「Green Book」「智造三点三」时使用。
 
-- **自动化新闻提炼**：集成多路内容抓取与语义分析，自动生成 100 字左右的高密度新闻摘要。
-- **高像素渲染**：基于 Playwright 的 HTML 截图技术，支持 Retina 级渲染（1800x2400px），确保文字边缘锐利，适合移动端高清晰度展示。
-- **AI 智能配图**：根据新闻内容自动提取视觉关键词，调用 AI 生图模型生成风格统一的编辑插画（Editorial Illustration）。
-- **品牌视觉一致性**：严格遵循品牌视觉规范，包括写字板背景、蓝色表头、特定字体（思源黑体）及装饰元素（便利贴、夹子）。
-- **灵活的素材支持**：支持自动 AI 生图与用户自定义本地图片（`localImage`）无缝切换。
+## 使用方法
+1. 输入新闻链接或内容，自动解析「主体-动作-对象」三元组
+2. 生成封面标题、内页标题、正文摘要、视觉关键词
+3. 预览确认后自动生成所有图文卡片
+4. 支持自定义上传配图，默认使用Gemini AI生成插图
 
-## 🛠️ 技术架构
+## 规范要求
+| 字段 | 要求 |
+|:---|:---|
+| 封面标题 | ≤20字，双行平衡，单行≤11字 |
+| 内页标题 | 约20字，过长需断行 |
+| 正文摘要 | **120-150字** |
+| 输出尺寸 | 1800x2400 px |
 
-- **Runtime**: Node.js
-- **Rendering**: Playwright (HTML to Image)
-- **AI Backend**: Claude (Summarization) & Image Generation API
-- **Design Strategy**: Clipboard Style Layout (3:4 Ratio)
+## 输出路径
+默认输出到 `~/my_project_area/images/san-dian-san-MMDD`
 
-## 📂 目录结构
+## 技术优化
+- 默认2并发生图，批次间隔8s
+- 失败重试自动切换极短prompt，提升通过率
+- 仅全部成功时自动打开文件夹
+- 支持自定义Gemini模型版本
 
-```text
-green-book/
-├── SKILL.md                  # Claude 技能定义与规范流程
-├── package.json              # 项目依赖 (playwright-core 等)
-├── assets/                   # 静态资产
-│   ├── cover-template.png    # 封面/背景底图模板
-│   └── logo.png              # 智造三点三横版 Logo
-└── scripts/
-    ├── generate.js           # HTML 模板与截图核心逻辑
-    └── run.js                # 主执行脚本与新闻数据配置
-```
-
-## 🚀 快速开始
-
-### 1. 安装依赖
-```bash
-npm install
-```
-
-### 2. 配置资产
-确保 `assets/` 目录下存在必要的品牌视觉素材：
-- `assets/cover-template.png`
-- `assets/logo.png`
-
-### 3. 执行流程
-1. **内容解析**：输入新闻 URL 或主题，由 AI 自动提炼标题与摘要。
-2. **数据填充**：将确认后的文案填入 `scripts/run.js` 的 `NEWS` 数组。
-3. **运行脚本**：
-   ```bash
-   node scripts/run.js
-   ```
-4. **结果获取**：图片将自动保存至 `~/Pictures/green-book/智造三点三 [日期]V[版本]/` 并自动打开文件夹。
-
-如需强制所有内页都使用 AI 生图，可执行：
-
-```bash
-GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
-```
-
-## ⚙️ 自定义生图引擎 (Custom Image Engine)
-
-本工具默认使用 `baoyu-image-gen` 技能进行生图，但你可以轻松适配任何支持命令行调用的生图工具（如 DALL-E 3, Midjourney API, Stable Diffusion 等）。
-
-只需修改 `scripts/run.js` 顶部的 `CONFIG` 对象：
-
-```javascript
-const CONFIG = {
-  // 修改为你自己的生图命令
-  // {{PROMPT}} 会被自动替换为新闻关键词
-  // {{OUTPUT}} 会被自动替换为生成的图片路径
-  imageGenCommand: `your-cli-tool --prompt "{{PROMPT}}" --output "{{OUTPUT}}"`,
-};
-```
-
-**示例配置：**
-- **使用 OpenAI CLI**: `openai api images.generate -p "{{PROMPT}}" --output "{{OUTPUT}}"`
-- **使用自定义 Shell 脚本**: `bash ~/scripts/my-ai-gen.sh "{{PROMPT}}" "{{OUTPUT}}"`
-
-## 🎨 视觉规范
-
-### 封面图 (Cover)
-- **尺寸**：900x1200px (2x 渲染输出)
-- **布局**：标题需与底图中的序号徽章实现像素级精确对齐。
-- **标题**：建议 10-15 字符，支持通过 `\n` 手动控制换行美感。
-
-### 内页图 (Inner Pages)
-- **蓝色表头**：130px 高，颜色代码 `#1565C0`，标题居中。
-- **中部插图**：456px 高，16:9 比例，支持 `object-fit: cover`。
-- **底部摘要**：28px 字号，1.85 行高，确保阅读舒适度。
-- **点缀元素**：四角旋转便利贴（黄色/绿色）与顶部复古夹子。
-
-## ⚠️ 开发与使用规范
-
-- **摘要长度**：严格控制在 90-110 字之间，以保持页面布局平衡。
-- **生图关键词**：`visualKeywords` 必须为英文，建议包含 `minimalist illustration` 或 `editorial style`。
-- **高清输出**：渲染脚本必须开启 `deviceScaleFactor: 2` 以保证输出质量。
-
----
-
-Built with ❤️ for **智造三点三**.
+## 环境依赖
+- `baoyu-danger-gemini-web` 技能作为生图后端
+- Node.js + Playwright 用于页面渲染

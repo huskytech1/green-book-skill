@@ -21,7 +21,7 @@ description: >
 2. 每条新闻生成：
    - `coverTitle`：封面标题，总字数不超过 20，单行不超过 11（超出时使用 `\n`）。
    - `headerTitle`：内页标题，目标约 20 字；过长时必须按语义断成两行（使用 `\n`）。
-   - `summary`：正文摘要，严格控制在 150-170 字。
+   - `summary`：正文摘要，严格控制在 120-150 字。
    - `visualKeywords`：英文视觉关键词。
    - `filename`：英文短文件名（如 `qclaw`）。
 
@@ -34,7 +34,7 @@ description: >
 用户确认封面后，必须进入“第二轮：内页标题与摘要审核”，逐条展示：
 | 序号 | 内页标题（可两行） | 摘要（150-170字） |
 | :--- | :--- | :--- |
-| 01 | 腾讯远程控电脑\nQClaw 开启公测 | （150-170字摘要） |
+| 01 | 腾讯远程控电脑\nQClaw 开启公测 | （120-150字摘要） |
 
 等待用户再次回复“确认”后进入 Step 3。
 
@@ -67,22 +67,22 @@ GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
 在执行 Step 3 前，需逐条自检：
 1. `coverTitle`：≤20 字，且双行平衡。
 2. `headerTitle`：目标约20字；若过长已按语义断行。
-3. `summary`：长度在 150-170 字。
+3. `summary`：长度在 120-150 字。
 4. 图片来源：未上传图片时，来源必须为 AI 生图。
 
 ## 路径与输出
 
 - 技能目录：`$HOME/.claude/skills/green-book`
-- 默认输出目录：`$HOME/my_project_area/documents/ai-daily-news/green-book`
+- 默认输出目录：`$HOME/my_project_area/images`
 - 支持环境变量覆盖输出目录：`GREEN_BOOK_OUTPUT_DIR=/your/path`
-- 实际输出子目录格式：`智造三点三 MMDDV_ULTRA_STABLE`
+- 实际输出子目录格式：`san-dian-san-MMDD`
 - 断点续传：若目标图片已存在，会自动跳过。
 
 ## 稳健参数（来自脚本）
 
-- 串行生成：`MAX_CONCURRENCY = 1`
-- 成功后冷却：`COOLDOWN_MS = 5000`
-- 失败重试：最多 `5` 次，随机退避 `10-15s`
+- 并发生图：`MAX_CONCURRENCY = 2`（每批 2 张）
+- 批次冷却：`COOLDOWN_MS = 5000`
+- 重试：最多 `3` 次，退避 8-12s，第 3 次起切换极短 prompt
 - 渲染：`deviceScaleFactor = 2`，输出 `1800x2400`
 
 ## 按需加载参考文档

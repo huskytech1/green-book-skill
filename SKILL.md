@@ -56,11 +56,24 @@ GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
 2. 仅当用户明确上传图片时，才在对应新闻项填写 `uploadedImage` 并使用本地图片。
 3. 禁止在未上传图片的情况下使用抓取图/历史图作为默认内页图。
 
-### 默认生图后端
+### 生图后端选择
 
-- 默认后端：`baoyu-danger-gemini-web`（通过 `bun scripts/main.ts` 调用）
+本技能支持多种 AI 生图后端，可按需选择：
+
+| 后端 | 环境变量 | 说明 |
+|------|----------|------|
+| `baoyu-danger-gemini-web` | `GREEN_BOOK_IMAGE_BACKEND=gemini` (默认) | Gemini Web API，速度快 |
+| `jimeng-web` | `GREEN_BOOK_IMAGE_BACKEND=jimeng` | 即梦 Web，国内可用 |
+
+#### Gemini Web（默认）
+- 调用方式：`bun scripts/main.ts`
 - 默认模型：`gemini-3-flash`
-- 可通过环境变量覆盖：`GREEN_BOOK_GEMINI_MODEL=gemini-3-pro`
+- 覆盖模型：`GREEN_BOOK_GEMINI_MODEL=gemini-3-pro`
+
+#### Jimeng Web
+- 调用方式：`bun ~/.claude/skills/jimeng-web/scripts/main.ts`
+- 需提前启动 Chrome：`--remote-debugging-port=9222`
+- 需登录 jimeng.jianying.com
 
 ## 质量闸门（新增）
 
@@ -84,6 +97,7 @@ GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
 - 批次冷却：`COOLDOWN_MS = 5000`
 - 重试：最多 `3` 次，退避 8-12s，第 3 次起切换极短 prompt
 - 渲染：`deviceScaleFactor = 2`，输出 `1800x2400`
+- 图片比例：`3:4` 竖图（适配小绿书内页）
 
 ## 按需加载参考文档
 

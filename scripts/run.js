@@ -9,6 +9,8 @@ const execPromise = util.promisify(exec);
 const DEFAULT_OUTPUT = path.join(os.homedir(), "my_project_area", "images");
 const GEMINI_WEB_SCRIPT = path.join(os.homedir(), ".claude", "skills", "baoyu-danger-gemini-web", "scripts", "main.ts");
 const GEMINI_WEB_MODEL = process.env.GREEN_BOOK_GEMINI_MODEL || "gemini-3-flash";
+const JIMENG_WEB_SCRIPT = path.join(os.homedir(), ".claude", "skills", "jimeng-web", "scripts", "main.ts");
+const IMAGE_BACKEND = process.env.GREEN_BOOK_IMAGE_BACKEND || "gemini";
 
 const MAX_CONCURRENCY = 2;     // 每批并发 2 张生图
 const MAX_RETRIES = 3;         // 最多重试 3 次
@@ -44,7 +46,16 @@ async function generateIllustration(news, targetDir, forceAiImage) {
     try {
       // 第 3 次起用极短 prompt
       const p = attempt >= 2 ? `${news.visualKeywords}, illustration` : prompt;
-      const cmd = `bun "${GEMINI_WEB_SCRIPT}" --model ${GEMINI_WEB_MODEL} --prompt "${p.replace(/"/g, '\\"')}" --image "${outPath}"`;
+      let cmd;
+      
+      if (IMAGE_BACKEND === 'jimeng') {
+        // Jimeng Web 后端
+        cmd = `bun "${JIMENG_WEB_SCRIPT}" --prompt "${p.replace(/"/g, '\\"')}" --ratio "3:4" --output "${outPath}"`;
+      } else {
+        // 默认 Gemini Web 后端
+        cmd = `bun "${GEMINI_WEB_SCRIPT}" --model ${GEMINI_WEB_MODEL} --prompt "${p.replace(/"/g, '\\"')}" --image "${outPath}"`;
+      }
+      
       await execPromise(cmd);
       if (fs.existsSync(outPath)) return { path: outPath, generated: true };
       throw new Error('No image returned');
@@ -61,20 +72,40 @@ async function generateIllustration(news, targetDir, forceAiImage) {
 }
 
 const NEWS = [
-  // 示例数据：实际使用时替换为真实新闻
   {
-    coverTitle: "示例封面标题第一行\n示例封面标题第二行",
-    headerTitle: "示例内页标题第一行\n示例内页标题第二行",
-    summary: "这里是120-150字的新闻摘要示例。请替换为真实新闻内容，确保字数在要求范围内，格式正确。新闻摘要需要简洁明了，涵盖核心信息，便于读者快速理解内容要点。所有内容需要符合小绿书排版规范。",
-    visualKeywords: "example, illustration, generic, placeholder",
-    filename: "example"
+    coverTitle: "登顶LMArena！\n阿里 Qwen 超越 GPT-5.4",
+    headerTitle: "Qwen3.5-Max 登顶\nLMArena 超越 GPT-5.4",
+    summary: "3月20日，阿里千问最新预览版 Qwen3.5-Max 以1464分登顶 LMArena 盲测榜，超越 GPT-5.4、Claude4.5 及 Grok4.1。全球前十强中，中国企业占据五席，阿里巴巴位居中国第一。这标志着国产大模型正式进入全球第一梯队，打破海外厂商长期垄断榜首的局面。",
+    visualKeywords: "AI, LMArena, Qwen, Alibaba, champion",
+    filename: "qwen-max"
   },
   {
-    coverTitle: "示例封面标题第一行\n示例封面标题第二行",
-    headerTitle: "示例内页标题第一行\n示例内页标题第二行",
-    summary: "这里是120-150字的新闻摘要示例。请替换为真实新闻内容，确保字数在要求范围内，格式正确。新闻摘要需要简洁明了，涵盖核心信息，便于读者快速理解内容要点。所有内容需要符合小绿书排版规范。",
-    visualKeywords: "example, illustration, generic, placeholder",
-    filename: "example2"
+    coverTitle: "微信能控电脑！\n腾讯 ClawBot 插件公测",
+    headerTitle: "微信 ClawBot 插件\n打通聊天界面操控 OpenClaw",
+    summary: "3月22日，腾讯正式推出微信「ClawBot」插件，支持用户在微信聊天界面直接操作 OpenClaw 实例。该插件已支持 iOS 微信 8.0.70 及以上版本，可通过扫码一键连接，支持收发照片、视频、语音、文件。腾讯同时开放 QClaw、WorkBuddy、Lighthouse 同步接入。",
+    visualKeywords: "WeChat, ClawBot, Tencent, OpenClaw, plugin",
+    filename: "clawbot"
+  },
+  {
+    coverTitle: "硅谷套壳中国AI？\nCursor 被发现用 Kimi",
+    headerTitle: "Cursor Composer 2\n被扒底层用 Kimi K2.5",
+    summary: "3月19日，AI 编程工具 Cursor 发布 Composer 2 后，有开发者发现其模型 ID 包含「kimi-k2p5-rl-0317」，质疑底层基于月之暗面的 Kimi K2.5 开源模型。Kimi K2.5 许可证要求月收入超2000万美元的商业产品需标注署名。3月21日月之暗面回应称属授权合作，但 Cursor 初期未公开说明引发争议。",
+    visualKeywords: "Cursor, Kimi, Moonshot, open source, controversy",
+    filename: "cursor-kimi"
+  },
+  {
+    coverTitle: "库克：中国AI太牛了\n期待下一步大动作",
+    headerTitle: "库克中国行\n点赞 AI 发展期待下一步",
+    summary: "3月22日，苹果 CEO 库克出席中国发展高层论坛时表示，中国机器人行业发展令人印象深刻，对 AI 领域「迫不及待想看看下一步发展」。他称赞中国开发者每天都在挑战创新极限，利用技术构建工具帮助人们学习技能、管理健康。库克还透露，苹果超90%产品已采用清洁能源供电。",
+    visualKeywords: "Tim Cook, Apple, China, AI, summit",
+    filename: "cook-china"
+  },
+  {
+    coverTitle: "西南首个AI影像高地！\n成都东部新区放大招",
+    headerTitle: "成都东部新区\n签约 OPC 打造 AI 影像人才高地",
+    summary: "3月20日，成都东部新区与东麓树莓影视科技签约，共建西南首个 AI 影像 OPC 人才社区。OPC（个体创意人）指在 AI 加持下具备独立完成高质量影像创作能力的群体。社区将提供创业空间、技术算法支持及产业对接服务，并被列入新区「十五五」人才规划重点，享受全方位政策保障。",
+    visualKeywords: "Chengdu, OPC, AI, talent, film",
+    filename: "chengdu-opc"
   }
 ];
 

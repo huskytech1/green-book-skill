@@ -24,6 +24,7 @@ description: >
    - `summary`：正文摘要，严格控制在 120-150 字。
    - `visualKeywords`：英文视觉关键词。
    - `filename`：英文短文件名（如 `qclaw`）。
+   - `uploadedImage`：可选，本地图片绝对路径；仅当用户明确上传图片时填写。
 
 ### Step 2：文案预审（阻断）
 向用户展示“事实核查与文案预览表（第一轮：封面）”：
@@ -39,7 +40,7 @@ description: >
 等待用户再次回复“确认”后进入 Step 3。
 
 ### Step 3：执行生成
-1. 将确认后的数据写入 `scripts/run.js` 的 `NEWS` 数组。
+1. 将确认后的数据写入 `scripts/news.js`，或通过 `GREEN_BOOK_NEWS_FILE` 指向自定义数据文件。
 2. 运行命令：
 ```bash
 cd "$HOME/.claude/skills/green-book"
@@ -48,6 +49,12 @@ node scripts/run.js
 3. 若要强制所有内页都使用 AI 生图：
 ```bash
 GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
+```
+此时即使 `NEWS` 中存在 `uploadedImage`，也会忽略本地图并重新生成 AI 配图。
+
+如需指定自定义数据文件：
+```bash
+GREEN_BOOK_NEWS_FILE=/absolute/path/to/news.js node scripts/run.js
 ```
 
 ## 图片来源策略（更新）
@@ -81,23 +88,30 @@ GREEN_BOOK_FORCE_AI_IMAGES=1 node scripts/run.js
 1. `coverTitle`：≤20 字，且双行平衡。
 2. `headerTitle`：目标约20字；若过长已按语义断行。
 3. `summary`：长度在 120-150 字。
-4. 图片来源：未上传图片时，来源必须为 AI 生图。
+4. 图片来源：未上传图片时，来源必须为 AI 生图；若填写 `uploadedImage`，路径必须存在。
+5. `filename`：必须为 kebab-case，方便文件命名与缓存复用。
 
 ## 路径与输出
 
 - 技能目录：`$HOME/.claude/skills/green-book`
+- 默认数据文件：`$HOME/.claude/skills/green-book/scripts/news.js`
 - 默认输出目录：`$HOME/my_project_area/images`
 - 支持环境变量覆盖输出目录：`GREEN_BOOK_OUTPUT_DIR=/your/path`
+- 支持环境变量覆盖数据源：`GREEN_BOOK_NEWS_FILE=/your/path/news.js`
 - 实际输出子目录格式：`san-dian-san-MMDD`
 - 断点续传：若目标图片已存在，会自动跳过。
 
 ## 稳健参数（来自脚本）
 
-- 并发生图：`MAX_CONCURRENCY = 2`（每批 2 张）
-- 批次冷却：`COOLDOWN_MS = 5000`
 - 重试：最多 `3` 次，退避 8-12s，第 3 次起切换极短 prompt
 - 渲染：`deviceScaleFactor = 2`，输出 `1800x2400`
 - 图片比例：`3:4` 竖图（适配小绿书内页）
+
+## 当前脚本行为说明
+
+- `scripts/run.js` 会从 `scripts/news.js` 读取数据，生成 AI 配图或复用 `uploadedImage`，随后继续合成内页与 `cover.png`。
+- 若输出目录中已存在对应 `ill-*.png`，脚本会跳过该配图并直接复用缓存。
+- 运行时会打印数据源路径，便于排查“脚本读的是哪份新闻数据”。
 
 ## 按需加载参考文档
 
